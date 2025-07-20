@@ -1,0 +1,8 @@
+# Ignore all pycache folders
+__pycache__/
+
+# Ignore all .env files
+.env
+
+# Ignore jupyter notebook files
+*.ipynb
