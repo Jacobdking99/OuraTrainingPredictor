@@ -37,7 +37,7 @@ requests-oauthlib==2.0.0
 rpds-py==0.22.3
 setuptools==72.1.0
 six==1.17.0
-smmap==5.0.2
+smmap
 streamlit==1.47.0
 tenacity==9.0.0
 toml==0.10.2
