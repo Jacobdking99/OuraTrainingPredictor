@@ -1,5 +1,5 @@
 from requests_oauthlib import OAuth2Session
-from python_dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 # Load environment variables from .env file
 load_dotenv()
