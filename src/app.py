@@ -42,13 +42,9 @@ def main():
             "<h3 style='text-align: center; color: white;'>Login to connect your Oura account:</h3>",
             unsafe_allow_html=True,
         )
-        if st.button("Login with Oura", type="primary"):
-            authorization_url = get_authorization_url()
-            st.markdown(
-                f"<p style='text-align: center;'><a href='{authorization_url}' target='_self' style='color: #1E90FF; font-size: 18px;'>Click here to login</a></p>",
-                unsafe_allow_html=True,
-            )
-            st.stop()
+        
+        authorization_url = get_authorization_url()
+        st.link_button("🔐 Log in with Ōura", authorization_url)
 
     # Step 2: Handle OAuth Callback
     query_params = st.query_params
