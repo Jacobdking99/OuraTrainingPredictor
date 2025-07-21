@@ -42,7 +42,13 @@ def main():
             code = query_params["code"]
             st.session_state["access_token"] = fetch_access_token(code)
             st.success("Successfully logged in with Oura!")
-            st.experimental_rerun()  # Clean up query params and restart app flow
+            # Save token
+            st.session_state["access_token"] = fetch_access_token(code)
+            st.success("Successfully logged in with Oura!")
+
+            # Remove query params to clean up URL
+            st.query_params.clear()
+            st.rerun()
             return
         except Exception as e:
             st.error(f"OAuth Error: {e}")
