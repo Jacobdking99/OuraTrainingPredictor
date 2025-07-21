@@ -55,24 +55,21 @@ def main():
             unsafe_allow_html=True,
         )
         authorization_url = get_authorization_url()
-        st.markdown(
-            f"""
-            <div style='text-align: center;'>
-                <a href="{authorization_url}" style="
-                    display: inline-block;
-                    background-color: #1e90ff;
-                    color: white;
-                    padding: 12px 20px;
-                    text-decoration: none;
-                    border-radius: 6px;
-                    font-size: 18px;
-                " target="_blank">
-                    🔐 Login with Ōura
-                </a>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        st.markdown(f"""
+        <div style='text-align: center;'>
+            <a href="{authorization_url}" target="_blank" style="
+                display: inline-block;
+                background-color: #1e90ff;
+                color: white;
+                padding: 12px 20px;
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 18px;
+            ">🔐 Login with Ōura</a>
+            <p style="color: white;">After logging in, return to this tab.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
 
         st.stop()
 
