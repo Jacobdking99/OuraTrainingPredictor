@@ -12,10 +12,12 @@ from utils.calculations import (
     adaptive_karvonen_zone_bounds,
     fetch_user_max_hr,
     fetch_user_resting_hr
-
 )
 from utils.oauth import get_authorization_url, fetch_access_token
+import streamlit.components.v1 as components  # <--- import added here for JS snippet
+
 def main():
+    # Set page configuration
     st.set_page_config(
         page_title="Oura Training Dashboard",
         page_icon="🌙",
@@ -28,36 +30,36 @@ def main():
         unsafe_allow_html=True,
     )
 
+    # Initialize session state variables
     if "access_token" not in st.session_state:
         st.session_state["access_token"] = None
 
+    # Step 1: Handle OAuth Callback FIRST
     query_params = st.query_params
-
-    # Detect OAuth-related query params (expand as needed)
-    oauth_params = {"code", "state"}
-    has_oauth_params = any(param in query_params for param in oauth_params)
-
-    # If OAuth params exist but no access token yet, try exchanging code for token
-    if has_oauth_params and not st.session_state["access_token"]:
+    if "code" in query_params and not st.session_state["access_token"]:
         try:
-            code = query_params.get("code")
-            if code:
-                st.info("Exchanging authorization code for token...")
-                st.session_state["access_token"] = fetch_access_token(code)
-                st.success("Successfully logged in with Oura!")
+            st.info("Exchanging authorization code for token...")
+            code = query_params["code"]
+            st.session_state["access_token"] = fetch_access_token(code)
+            st.success("Successfully logged in with Oura!")
 
-                # Clear query params to clean URL, then rerun
-                st.query_params.clear()
-                st.experimental_rerun()
-                return
-            else:
-                st.error("OAuth parameters present but no code found.")
-                st.stop()
+            # Clear URL query params using JS without reloading the page
+            components.html(
+                """
+                <script>
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                </script>
+                """,
+                height=0,
+            )
+
+            st.experimental_rerun()
+            return
         except Exception as e:
             st.error(f"OAuth Error: {e}")
             st.stop()
 
-    # If no token and no OAuth params, show login button
+    # Step 2: Show login button if no token
     if not st.session_state["access_token"]:
         st.markdown(
             "<h3 style='text-align: center; color: white;'>Login to connect your Oura account:</h3>",
@@ -75,12 +77,13 @@ def main():
                 border-radius: 6px;
                 font-size: 18px;
             ">🔐 Login with Ōura</a>
-            <p style="color: white;">After logging in, you will be redirected here automatically.</p>
+            <p style="color: white;">After logging in, return to this tab.</p>
         </div>
         """, unsafe_allow_html=True)
+
         st.stop()
 
-    # If token exists, fetch and show data
+    # Step 3: Fetch and process data if logged in
     access_token = st.session_state["access_token"]
     try:
         data = fetch_oura_data(access_token)
@@ -105,6 +108,7 @@ def main():
             acr=training_load_ratio,
         )
 
+        # Layout
         with st.container():
             row1_col1, row1_col2 = st.columns(2)
 
