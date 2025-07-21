@@ -66,7 +66,7 @@ def main():
         authorization_url = get_authorization_url()
         st.markdown(f"""
         <div style='text-align: center;'>
-            <a href="{authorization_url}" target="_self" style="
+            <a href="{authorization_url}" target="_blank" style="
                 display: inline-block;
                 background-color: #1e90ff;
                 color: white;
