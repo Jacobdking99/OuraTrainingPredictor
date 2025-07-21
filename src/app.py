@@ -44,7 +44,9 @@ def main():
         )
         
         authorization_url = get_authorization_url()
-        st.link_button("🔐 Log in with Ōura", authorization_url)
+        st.link_button("🔐 Login with Ōura", authorization_url)
+        st.stop()
+
 
     # Step 2: Handle OAuth Callback
     query_params = st.query_params
