@@ -66,7 +66,7 @@ def main():
                     text-decoration: none;
                     border-radius: 6px;
                     font-size: 18px;
-                " target="_self">
+                " target="_blank">
                     🔐 Login with Ōura
                 </a>
             </div>
