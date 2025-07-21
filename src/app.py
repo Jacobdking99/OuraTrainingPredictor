@@ -15,9 +15,7 @@ from utils.calculations import (
 
 )
 from utils.oauth import get_authorization_url, fetch_access_token
-
 def main():
-    # Set page configuration
     st.set_page_config(
         page_title="Oura Training Dashboard",
         page_icon="🌙",
@@ -30,31 +28,36 @@ def main():
         unsafe_allow_html=True,
     )
 
-    # Initialize session state variables
     if "access_token" not in st.session_state:
         st.session_state["access_token"] = None
 
-    # Step 1: Handle OAuth Callback FIRST
     query_params = st.query_params
-    if "code" in query_params and not st.session_state["access_token"]:
-        try:
-            st.info("Exchanging authorization code for token...")
-            code = query_params["code"]
-            st.session_state["access_token"] = fetch_access_token(code)
-            st.success("Successfully logged in with Oura!")
-            # Save token
-            st.session_state["access_token"] = fetch_access_token(code)
-            st.success("Successfully logged in with Oura!")
 
-            # Remove query params to clean up URL
-            st.query_params.clear()
-            st.rerun()
-            return
+    # Detect OAuth-related query params (expand as needed)
+    oauth_params = {"code", "state"}
+    has_oauth_params = any(param in query_params for param in oauth_params)
+
+    # If OAuth params exist but no access token yet, try exchanging code for token
+    if has_oauth_params and not st.session_state["access_token"]:
+        try:
+            code = query_params.get("code")
+            if code:
+                st.info("Exchanging authorization code for token...")
+                st.session_state["access_token"] = fetch_access_token(code)
+                st.success("Successfully logged in with Oura!")
+
+                # Clear query params to clean URL, then rerun
+                st.query_params.clear()
+                st.experimental_rerun()
+                return
+            else:
+                st.error("OAuth parameters present but no code found.")
+                st.stop()
         except Exception as e:
             st.error(f"OAuth Error: {e}")
             st.stop()
 
-    # Step 2: Show login button if no token
+    # If no token and no OAuth params, show login button
     if not st.session_state["access_token"]:
         st.markdown(
             "<h3 style='text-align: center; color: white;'>Login to connect your Oura account:</h3>",
@@ -63,7 +66,7 @@ def main():
         authorization_url = get_authorization_url()
         st.markdown(f"""
         <div style='text-align: center;'>
-            <a href="{authorization_url}" target="_blank" style="
+            <a href="{authorization_url}" target="_self" style="
                 display: inline-block;
                 background-color: #1e90ff;
                 color: white;
@@ -72,14 +75,12 @@ def main():
                 border-radius: 6px;
                 font-size: 18px;
             ">🔐 Login with Ōura</a>
-            <p style="color: white;">After logging in, return to this tab.</p>
+            <p style="color: white;">After logging in, you will be redirected here automatically.</p>
         </div>
         """, unsafe_allow_html=True)
-
-
         st.stop()
 
-    # Step 3: Fetch and process data if logged in
+    # If token exists, fetch and show data
     access_token = st.session_state["access_token"]
     try:
         data = fetch_oura_data(access_token)
@@ -104,7 +105,6 @@ def main():
             acr=training_load_ratio,
         )
 
-        # Layout
         with st.container():
             row1_col1, row1_col2 = st.columns(2)
 
