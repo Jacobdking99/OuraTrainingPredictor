@@ -55,7 +55,25 @@ def main():
             unsafe_allow_html=True,
         )
         authorization_url = get_authorization_url()
-        st.link_button("🔐 Login with Ōura", authorization_url)
+        st.markdown(
+            f"""
+            <div style='text-align: center;'>
+                <a href="{authorization_url}" style="
+                    display: inline-block;
+                    background-color: #1e90ff;
+                    color: white;
+                    padding: 12px 20px;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-size: 18px;
+                " target="_self">
+                    🔐 Login with Ōura
+                </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         st.stop()
 
     # Step 3: Fetch and process data if logged in
