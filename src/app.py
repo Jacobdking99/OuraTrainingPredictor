@@ -48,13 +48,14 @@ def main():
         st.stop()
 
 
+
     # Step 2: Handle OAuth Callback
     query_params = st.query_params
     if "code" in query_params:
         code = query_params["code"]
         try:
             st.session_state["access_token"] = fetch_access_token(code)
-            st.query_params.clear()  # Clear query params
+            #st.query_params.clear()  # Clear query params
             st.success("Successfully logged in!")
         except Exception as e:
             st.error(f"OAuth Error: {e}")
